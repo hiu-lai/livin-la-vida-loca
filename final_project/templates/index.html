@@ -27,12 +27,11 @@
           {% for t in t_list %}
             <option value={{ t['team']}}>{{ t['team']}}</option>
           {% endfor %}
-        </select>
-        <!-- &nbsp; at: Venue&nbsp;  -->
-        <!-- <select id="Venue" name="Venue" style="max-width:12%;">
+        </select>&nbsp; at: Venue&nbsp; 
+        <select id="Venue" name="Venue" style="max-width:12%;">
           <option value="Home">Home</option>
           <option value="Away">Away</option> 
-        </select> -->
+        </select>
         <button type="button" class="button" value="Submit" onclick="submit_btn()" style="width:20%;">Show me the Winner!</button><br>
       </div>
       </div>
@@ -45,7 +44,7 @@
         <button class="tablink" name="Prediction" onclick="openPage(event, 'Prediction')">Prediction</button>
         <button class="tablink" name="Prediction" onclick="openPage(event, 'upcoming')">Upcoming Matches</button>
         <button class="tablink" name="Dashboard" onclick="openPage(event, 'Dashboards')">Statistic</button>
-        <!-- <button class="tablink" name="Shots" onclick="openPage(event, 'Stats')">Shots stats</button> -->
+        <button class="tablink" name="Shots" onclick="openPage(event, 'Stats')">Shots stats</button>
         <button class="tablink" name="About" onclick="openPage(event, 'About')">About</button>
         <button class="tablink" name="api" onclick="openPage(event, 'api')">api</button>
       </div>
@@ -59,25 +58,27 @@
         
         <form method=post enctype=multipart/form-data >
           <p>
-          <label for="team">Team</label>
+          <label for="team">What is your team?</label>
           <select id="team" name="team">
           {% for t in t_list %}
             <option value={{ t['team']}}>{{ t['team']}}</option>
           {% endfor %}
           </select>
-          <label for="opponent">Opponent</label>
+          <label for="opponent">What is the opponent</label>
           <select id="opponent" name="opponent">
           {% for t in t_list %}
             <option value={{ t['team']}}>{{ t['team']}}</option>
           {% endfor %}
           </select>
           <br>
-          <label for="Venue">Home or Away? </label>
+          <label for="Venue">Where do they play</label>
           <select id="venue" name="venue">
              <option value="Home">Home</option>
              <option value="Away">Away</option>
+            
           </select>
-          <label for="Day">Game Day</label>
+       
+          <label for="Day">Which day is the game?</label>
           <select id="day" name="day">
              <option value="0">Monday</option>
              <option value="1">Tuesday</option>
@@ -86,15 +87,16 @@
              <option value="4">Friday</option>
              <option value="5">Saturday</option>
              <option value="6">Sunday<option>
-          </select><br>
-          <label for="xg">Expected Goals (xG)</label> 
-          <input type="number" id="xg" name="xg" min="0" max="5"><br>
-          <label for="xg">Expected Goals Against (xGa)</label>
-          <input type="number" id="xga" name="xga" min="0" max="5"><br><br>
-          <button id="button" type="submit" value="submit" class="button" onclick="return foo(event);">Submit</button>
+          </select>
+       
+          <input type="text" id="xg" name="xg"><br>
+          <label for="xg">What is xg for your team?</label><br>
+          <input type="text" id="xga" name="xga"><br><br>
+          <label for="xg">What is xga for the opponent?</label><br>
+          <input type="submit" value="Submit" id="search_form_input">
        </form>
           
-        <p id="results"></p>
+        <!-- <p>Winning team is {{ result }}</p> -->
       </div>
       <div id="upcoming" class="tabcontent">
         
@@ -146,10 +148,12 @@
           <div id="vizContainer" style="width:50%; height:100%;"></div>   
           <div id="vizContainer1" style="width:50%; height:100%;"></div>   
         </div>
-        <div id="vizContainerAvg" style="width: 100%; height:100%"></div>   
       </div>
   
       <div id="Stats" class="tabcontent">
+        <h3>Average Shots by Months</h3>
+        <p>Review and compare the number of average shots by months for team.</p>
+        <div id="vizContainerAvg" style="width: 100%; height:100%"></div>   
       </div>
       
       <div id="About" class="tabcontent">

@@ -38,8 +38,6 @@ function submit_btn() {
   console.log*('createComparisonViz')
   createComparisonViz(_ParamA, _ParamB);
   // } 
-  document.getElementById('team').value=_ParamA ;
-  document.getElementById('opponent').value=_ParamB ;
 }
 
 function createComparisonViz(_ParamA, _ParamB) {
@@ -102,44 +100,35 @@ function createShotsViz() {
 	// Create a viz object and embed it in the container div.
 }
 
+function openNav() {
+  document.getElementById("sidebar").style.width = "250px";
+  document.getElementById("main").style.marginLeft = "250px";
+}
+
+function closeNav() {
+  document.getElementById("sidebar").style.width = "0";
+  document.getElementById("main").style.marginLeft= "0";
+}
+
+function selWeekFunction() {
+  var input, filter, table, tr, td, i, txtValue;
+  input = document.getElementById("match_week");
+  filter = input.value.toUpperCase();
+  table = document.getElementById("upcoming_matches");
+  tr = table.getElementsByTagName("tr");
+  for (i = 0; i < tr.length; i++) {
+    td = tr[i].getElementsByTagName("td")[0];
+    if (td) {
+      txtValue = td.textContent || td.innerText;
+      if (txtValue.toUpperCase().indexOf(filter) > -1) {
+        tr[i].style.display = "";
+      } else {
+        tr[i].style.display = "none";
+      }
+    }       
+  }
+}
+
 window.onload = function() {
   document.getElementById('Home').click();
 };
-
-
-var form = document.getElementById("myForm");
-function handleForm(event) { event.preventDefault(); } 
-form.addEventListener('submit', handleForm);
-
-
-// function foo() {
-//   document.getElementById("test").click();
-//   return false;
-// }
-
-
-function foo(event) {
-  event.preventDefault();
-  let team = document.getElementById("team").value;
-  let opponent = document.getElementById("opponent").value;
-  let venue = document.getElementById("venue").value;
-  let day = document.getElementById("day").value;
-  let xg = document.getElementById("xg").value;
-  let xga = document.getElementById("xga").value;
-
-
-  fetch("/", {
-    method: 'POST',
-    headers: new Headers({
-      'Content-Type': 'application/x-www-form-urlencoded'
-    }),
-    body: "team="+team+"&opponent="+opponent+"&venue="+venue+"&day="+day+"&xg="+xg+"&xga="+xga
-  })
-  .then((response) => response.text())
-  .then((responseText) => {
-    document.getElementById("results").innerHTML ='<font size="6">' + team + " is expected to " + responseText+'</font>';
-  })
-  .catch((error) => {
-      console.error(error);
-  });
-}

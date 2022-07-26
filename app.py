@@ -6,6 +6,12 @@ from config import password
 import init_db
 import pandas as pd
 import os
+from sklearn.ensemble import RandomForestClassifier
+from sklearn import preprocessing
+from sklearn.metrics import accuracy_score, confusion_matrix, classification_report
+import pickle
+import numpy as np
+
 
 url = f'postgresql://postgres:{password}@localhost:5432/final_project'
 # engine = create_engine(url)
@@ -17,6 +23,9 @@ app.config['SQLALCHEMY_DATABASE_URI'] = url
 app.debug = True
 db = SQLAlchemy(app)
 
+app.config['CORS_HEADERS'] = 'Content-Type'
+filename = 'finalized_model.sav'
+filename_minmax ='min_max_scalar.sav'
 
 class matches(db.Model):
     __tablename__ = "matches_final"
@@ -113,8 +122,37 @@ class upcoming_matches_df(db.Model):
         self.mod3 = mod3
         self.mod4 = mod4
 
+# Machine Learning calculation
+def calculate_outcomes(day, venue, xg, xga, team, opponent):
+    ## Column number is 2 for xg and 3 for xga
+    df_mew = pd.DataFrame(columns=['day','venue','team','opponent'])
+    df_mew.loc[0] = [day, venue, team, opponent]
+
+
+    print(df_mew)
+
+    file = open("dict_all.obj",'rb')
+    dict_all_loaded = pickle.load(file)
+    file.close()
+
+    for col in df_mew.columns:
+        df_mew.replace(dict_all_loaded[col], inplace=True)
+    
+    df_mew.insert(loc=2, column='xg', value=[xg])
+    df_mew.insert(loc=3, column='xga', value=[xga])
+    
+    X=df_mew
+
+    #     load.model(filename_ml, read)
+    finalized_model = pickle.load(open(filename, 'rb'))
+    #finalized_model = load.model(filename, read)
+    y=finalized_model.predict(X)
+    
+    return y[0]
+
 @app.route("/", methods=['POST', 'GET'])
 def index():
+    # Load drop down list data from postgres
     t_list = team_list.query.all()
     udata = upcoming_matches_df.query.all()
     uc_match_list = []
@@ -138,7 +176,36 @@ def index():
         if uc_match.Wk != lstWk:
             weeknum_list.append(uc_match.Wk)
         lstWk = uc_match.Wk
-    return render_template("index.html", upcoming_data=uc_match_list, weeknum_list = weeknum_list, t_list=t_list)
+    
+    # Machine Learning
+    if request.method=='POST':
+        day = request.form['day']
+        venue = request.form['venue']
+        xg = request.form['xg']
+        if xg == '':
+            xg = 0.1
+        xg = float(xg)
+
+        xga = request.form['xga']
+        if xga == '':
+            xga = 0.1
+        xga = float(xga)
+        team = request.form['team']
+        opponent = request.form['opponent']
+    
+
+        result = calculate_outcomes(day, venue, xg, xga, team, opponent)
+
+        if result==0:
+            result = 'Draw'
+        elif result==1:
+            result = 'Loss'
+        else:
+            result = 'Win'
+        return result
+
+    else:
+        return render_template("index.html", upcoming_data=uc_match_list, weeknum_list = weeknum_list, t_list=t_list)
 
 @app.route("/upcoming_matches")
 def upcoming_matches():
@@ -209,3 +276,5 @@ def getMatchData():
     return jsonify(output)
 
 
+if __name__ == '__main__':
+   app.run(debug = True)
