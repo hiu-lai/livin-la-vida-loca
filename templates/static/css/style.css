@@ -111,7 +111,7 @@ body, html {
   border: 1px solid darkgray;
   cursor: pointer;
   border-radius: 2px;
-  padding: 15px;
+  padding: 5px;
 }
 
 .button:hover {

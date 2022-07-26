@@ -33,7 +33,7 @@
           <option value="Home">Home</option>
           <option value="Away">Away</option> 
         </select> -->
-        <button type="button" class="button" value="Submit" onclick="submit_btn()" style="width:20%;">Show me the Winner!</button><br>
+        <button type="button" class="button" value="Submit" onclick="submit_btn()" style="width:20%;">Show me the Stats!</button><br>
       </div>
       </div>
     </div><br>
@@ -42,9 +42,9 @@
     <div class="row">
       <div class="tab">
         <button class="tablink" name="Home" id="defaultOpen" onclick="openPage(event, 'Home')" >Home</button>        
-        <button class="tablink" name="Prediction" onclick="openPage(event, 'Prediction')">Prediction</button>
+        <button class="tablink" name="Dashboard" onclick="openPage(event, 'Dashboards')">Stats</button>
+        <button class="tablink" name="Prediction" onclick="openPage(event, 'Prediction')">The wining team is..</button>
         <button class="tablink" name="Prediction" onclick="openPage(event, 'upcoming')">Upcoming Matches</button>
-        <button class="tablink" name="Dashboard" onclick="openPage(event, 'Dashboards')">Statistic</button>
         <!-- <button class="tablink" name="Shots" onclick="openPage(event, 'Stats')">Shots stats</button> -->
         <button class="tablink" name="About" onclick="openPage(event, 'About')">About</button>
         <button class="tablink" name="api" onclick="openPage(event, 'api')">api</button>
@@ -54,9 +54,6 @@
         <p>How it works</p>
       </div>
       <div id="Prediction" class="tabcontent">
-        <h3>Prediction</h3>
-        <p>Prediction</p>
-        
         <form method=post enctype=multipart/form-data >
           <p>
           <label for="team">Team</label>
