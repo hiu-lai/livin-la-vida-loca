@@ -86,7 +86,7 @@
           </select><br>
           <label for="xg">Expected Goals (xG)</label> 
           <input type="number" id="xg" name="xg" min="0" max="5"><br>
-          <label for="xg">Expected Goals Against (xGa)</label>
+          <label for="xg">Opponent's Expected Goals (xG)</label>
           <input type="number" id="xga" name="xga" min="0" max="5"><br><br>
           <button id="button" type="submit" value="submit" class="button" onclick="return foo(event);">Submit</button>
        </form>
@@ -113,8 +113,10 @@
                 <th scope="col" style="text-align:center">Time</th>
                 <th scope="col" style="text-align:center">Home</th>
                 <th scope="col" style="text-align:center">Away</th>
-                <th scope="col" style="text-align:center">Venue</th>
-                <th scope="col" style="text-align:center">ML</th>
+                <!-- <th scope="col" style="text-align:center">Venue</th> -->
+                <th scope="col" style="text-align:center">xG</th>
+                <th scope="col" style="text-align:center">xGa</th>
+                <th scope="col" style="text-align:center">Home team will..</th>
 
               </tr>
             </thead>
@@ -127,7 +129,9 @@
                   <td>{{ x['date']}}</td>
                   <td>{{ x['home']}}</td>
                   <td>{{ x['away']}}</td>
-                  <td>{{ x['venue']}}</td>
+                  <!-- <td>{{ x['venue']}}</td> -->
+                  <td></td>
+                  <td></td>
                   <td>{{ x['mod1']}}</td>
 
               </tr>

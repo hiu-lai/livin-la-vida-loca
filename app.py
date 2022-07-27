@@ -105,8 +105,6 @@ class upcoming_matches_df(db.Model):
     season = db.Column(db.Integer(), nullable=False)
     mod1 = db.Column(db.String(), nullable=True)
     mod2 = db.Column(db.String(), nullable=True)
-    mod3 = db.Column(db.String(), nullable=True)
-    mod4 = db.Column(db.String(), nullable=True)
 
     def __init__(self, Wk, Day, Date, Time, Home, Away, Venue, season, mod1, mod2, mod3, mod4):
         self.wk = Wk
@@ -119,8 +117,18 @@ class upcoming_matches_df(db.Model):
         self.season = season
         self.mod1 = mod1
         self.mod2 = mod2
-        self.mod3 = mod3
-        self.mod4 = mod4
+
+def weeknum(weekday):
+    switcher = {
+        'Mon': 1,
+        'Tue': 5,
+        'Wed': 6,
+        'Thu': 4,
+        'Fri': 0,
+        'Sat': 2,
+        'Sun': 3
+    } 
+    return switcher.get(weekday, "nothing")
 
 # Machine Learning calculation
 def calculate_outcomes(day, venue, xg, xga, team, opponent):
@@ -170,8 +178,6 @@ def index():
         uc_output['season'] =  uc_match.season
         uc_output['mod1'] =  uc_match.mod1
         uc_output['mod2'] =  uc_match.mod2 
-        uc_output['mod3'] =  uc_match.mod3
-        uc_output['mod4'] =  uc_match.mod4
         uc_match_list.append(uc_output)
         if uc_match.Wk != lstWk:
             weeknum_list.append(uc_match.Wk)
@@ -180,7 +186,9 @@ def index():
     # Machine Learning
     if request.method=='POST':
         day = request.form['day']
+        print(day)
         venue = request.form['venue']
+        print(venue)
         xg = request.form['xg']
         if xg == '':
             xg = 0.1
@@ -192,7 +200,8 @@ def index():
         xga = float(xga)
         team = request.form['team']
         opponent = request.form['opponent']
-    
+        print(team)
+        print(opponent)
 
         result = calculate_outcomes(day, venue, xg, xga, team, opponent)
 
@@ -209,8 +218,10 @@ def index():
 
 @app.route("/upcoming_matches")
 def upcoming_matches():
-    init_db.upcoming_matches()
-    udata = upcoming_matches_df.query.all()
+    # init_db.upcoming_matches()
+    t_list = team_list.query.all()
+    # udata = upcoming_matches_df.query.all()
+    udata = upcoming_matches_df.query.filter_by(Wk='1.0')
     uc_match_list = []
     weeknum_list = []
     lstWk = ''
@@ -224,15 +235,25 @@ def upcoming_matches():
         uc_output['away'] =  uc_match.Away 
         uc_output['venue'] =  uc_match.Venue
         uc_output['season'] =  uc_match.season
-        uc_output['mod1'] =  uc_match.mod1
-        uc_output['mod2'] =  uc_match.mod2 
-        uc_output['mod3'] =  uc_match.mod3
-        uc_output['mod4'] =  uc_match.mod4
+        # uc_output['daynum'] = weeknum(uc_match.Day) 
+        try:
+            if calculate_outcomes(weeknum(uc_match.Day) , 'Home', 0, 0,uc_match.Home, uc_match.Away) == 0:
+                uc_output['mod1'] =  'Draw'
+            elif calculate_outcomes(weeknum(uc_match.Day) , 'Home', 0, 0,uc_match.Home, uc_match.Away) == 1:
+                uc_output['mod1'] = 'Loss'
+            else:
+                uc_output['mod1'] = 'Win'    
+        except ValueError:
+            uc_output['mod1'] =''
+        # uc_output['mod2'] =  uc_match.mod2 
+        # uc_output['mod3'] =  uc_match.mod3
+        # uc_output['mod4'] =  uc_match.mod4
+        uc_match_list.append(uc_output)
         uc_match_list.append(uc_output)
         if uc_match.Wk != lstWk:
             weeknum_list.append(uc_match.Wk)
         lstWk = uc_match.Wk
-    return render_template("index.html", upcoming_data=uc_match_list, weeknum_list = weeknum_list)
+    return render_template("index.html", upcoming_data=uc_match_list, weeknum_list = weeknum_list, t_list=t_list)
 
 @app.route("/renew_data")
 def renew_data():
